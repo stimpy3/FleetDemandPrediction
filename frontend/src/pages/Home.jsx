@@ -12,14 +12,21 @@ const Home=()=>{
   const [vehicle, setVehicle] = useState("Scooter");
   const [avgPrepTime, setAvgPrepTime] = useState(20);
   const [chartData, setChartData] = useState([]);
+  const [maxFleet,setMaxFleet]= useState(0);
+  const [peakHours,setPeakHours]=useState([]);
+  const [maxOrderPerHour,setMaxOrderPerHour]=useState(0);
 
-
+  const API_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://127.0.0.1:8000"
+    : process.env.REACT_APP_API_URL;
 
  useEffect(() => {
   const fetchPrediction = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/predict-hourly",
+        
+        `${API_URL}/predict-hourly`,
         {
           Day_of_Week: day,
           Weather: weather,
@@ -28,15 +35,33 @@ const Home=()=>{
           avg_prep_time: avgPrepTime
         }
       );
-
-      setChartData(res.data);
+      console.log(res.data.predictions || "I have nothin")
+      setChartData(res.data.predictions || []);
+    
     } catch (err) {
       console.error("Prediction API error:", err);
     }
   };
 
-  // fetchPrediction();
+  fetchPrediction();
 }, [day, weather, traffic, vehicle, avgPrepTime]);
+
+
+
+useEffect(() => {
+  if (!chartData.length) return;
+
+  const maxFleetValue = Math.max(...chartData.map(d => d.fleet_required));
+  setMaxFleet(maxFleetValue);
+
+  const peak = chartData.find(d => d.fleet_required === maxFleetValue);
+  setPeakHours(`${peak.hour}-${peak.hour + 1}`);
+
+  const peakOrders = Math.max(...chartData.map(d => Number(d.orders_in_hour)));
+  setMaxOrderPerHour(peakOrders);
+}, [chartData]);
+
+
 
 
    return(
@@ -129,8 +154,7 @@ const Home=()=>{
                          <span className="text-[1.3rem] leading-none font-medium">Max Fleet</span>
                          <span className="text-[0.9rem] text-[#626262]">Today</span>
                          <p className="mt-[2px] w-full text-[1.7rem] font-bold bg-gradient-to-r from-[#5EA6EE] to-[#635380] bg-clip-text text-transparent ">
-                          50
-                            {/* {prediction ? prediction.fleet_required : "-"} */}
+                           {maxFleet}
                           </p>
                          <p className="mt-[2px] w-full text-[0.8rem] text-green-500 font-medium">+18% increase</p>
                       </section>
@@ -142,7 +166,9 @@ const Home=()=>{
                       <section className="flex-col justify-center flex h-full w-[70%] p-[15px] ">
                          <span className="text-[1.3rem] leading-none font-medium">Peak Hours</span>
                          <span className="text-[0.9rem] text-[#626262]">Today</span>
-                         <p className="mt-[2px] w-full text-[1.7rem] font-bold  bg-[linear-gradient(200deg,#538E38,#d7db5c)] bg-clip-text text-transparent ">8pm - 9pm</p>
+                         <p className="mt-[2px] w-full text-[1.7rem] font-bold  bg-[linear-gradient(200deg,#538E38,#d7db5c)] bg-clip-text text-transparent ">
+                          {peakHours}
+                         </p>
                          <p className="mt-[2px] w-full text-[0.8rem] text-green-500 font-medium">+18% increase</p>
                       </section>
                       <div className="right-0 absolute w-[45%] h-full bg-[url('./clock.png')] bg-cover bg-no-repeat"></div>
@@ -153,7 +179,9 @@ const Home=()=>{
                       <section className="flex-col justify-center flex h-full w-[70%] p-[15px] ">
                          <span className="text-[1.3rem] leading-none font-medium">Peak order/hr</span>
                          <span className="text-[0.9rem] text-[#626262]">Today</span>
-                         <p className="mt-[2px] w-full text-[1.7rem] font-bold bg-[linear-gradient(200deg,#E67AB2,#75529C)] bg-clip-text text-transparent ">100</p>
+                         <p className="mt-[2px] w-full text-[1.7rem] font-bold bg-[linear-gradient(200deg,#E67AB2,#75529C)] bg-clip-text text-transparent ">
+                          {maxOrderPerHour}
+                         </p>
                          <p className="mt-[2px] w-full text-[0.8rem] text-green-500 font-medium">+18% increase</p>
                       </section>
                       <div className="right-0 absolute w-[45%] h-full bg-[url('./order.png')] bg-cover bg-no-repeat"></div>
@@ -163,7 +191,7 @@ const Home=()=>{
                 </section>
 
                 <section name="inputGraph-utisation-body" className="flex mt-[15px] w-full gap-[20px]">
-                   <div name="input-graph" className="flex justify-center items-center rounded-lg aspect-[3/2] w-1/2 shadow-sm bg-[#ffffff] overflow-hidden">
+                   <div name="input-graph" className="flex justify-center items-center rounded-lg aspect-[3/2] w-[60%] shadow-sm bg-[#ffffff] overflow-hidden">
                         {/* expects js object
                         const chartData = [
                           { hour: 9,  fleet_required: 18 },
@@ -175,18 +203,25 @@ const Home=()=>{
                           { hour: 15, fleet_required: 24 }
                         ]; 
                         Recharts normally shows:
-                        9   10   11   12
-                        
+                        9   10   11   12                   
                         But you want hour ranges, not raw numbers.
                         So when Recharts is about to render an X-axis label:
                         It passes the tick value → h
                         You return a string      
                         */}
-                         <BarChart width={600} height={300} data={chartData}>
+                         <BarChart width={600} height={300} data={chartData}
+                           margin={{ top: 0, right: 60, bottom: 20, left: 10 }}
+                            >
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis
                             dataKey="hour"
+                            interval={0}
+                            //  angle={-30}
+                             textAnchor="middle"
+                           tickMargin={8}
                             tickFormatter={(h) => `${h}-${h+1}`}
+                             tick={{ fontSize: 12 }}
+                             barCategoryGap="30%"
                           />
                           {/* This tells Recharts:“For each object in chartData, use the value under the key hour for the X-axis.” */}
                           <YAxis />
@@ -194,8 +229,9 @@ const Home=()=>{
                           <Bar dataKey="fleet_required" fill="#5EA6EE" />
                         </BarChart>
                    </div>
-                   
-                   <div name="utilisation" className="relative aspect-[3/2] w-1/2 shadow-sm bg-[#ffffff] rounded-lg bg-[url('./scooterOutline.png')] bg-contain bg-no-repeat">
+                   {/* bg-[url('./scooterOutline.png')] bg-contain bg-no-repeat */}
+                     <div name="utilisation" className="relative aspect-[3/2] w-[40%] shadow-sm bg-[#ffffff] rounded-lg ">
+                 
                       <div className="absolute z-[10] backdrop-blur-[10px] border-[1.5px] border-[#dfdfdf] bg-[#ebebeb53] p-[10px] bottom-[10px] top-[10px] left-[10px] rounded-lg overflow-hidden">
                          <section className="w-full">Fleet Utilisation Rate:</section>
                          <div className="w-full">

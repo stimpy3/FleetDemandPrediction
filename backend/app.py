@@ -73,7 +73,9 @@ def predict_hourly(payload: PredictPayload):
 
         results.append({
             "hour": hour,
-            "fleet_required": int(fleet)
+            "fleet_required": int(fleet),
+             "orders_in_hour": int(orders) 
+         
         })
 
     return {"predictions": results}
