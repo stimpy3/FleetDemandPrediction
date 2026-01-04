@@ -19,6 +19,7 @@ hourly_df = pd.read_csv("ml/hourly_aggregated.csv")
 # ------------------------------
 app = FastAPI(title="Fleet Predictor API")
 
+
 # Optional: allow frontend to call API from other ports
 app.add_middleware(
     CORSMiddleware,
