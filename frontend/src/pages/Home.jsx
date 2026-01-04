@@ -158,7 +158,7 @@ useEffect(() => {
                           </p>
                          <p className="mt-[2px] w-full text-[0.8rem] text-green-500 font-medium">+18% increase</p>
                       </section>
-                      <div className="right-0 absolute w-[45%] h-full bg-[url('./scooter.png')] bg-cover bg-no-repeat"></div>
+                      <div className="right-0 absolute w-[45%] h-full bg-[url('/scooter.png')] bg-cover bg-no-repeat"></div>
                       <section className="h-full  bg-[linear-gradient(200deg,#5EA6EE,#635380)] w-[30%] "> </section>
                    </div>
     
@@ -171,7 +171,7 @@ useEffect(() => {
                          </p>
                          <p className="mt-[2px] w-full text-[0.8rem] text-green-500 font-medium">+18% increase</p>
                       </section>
-                      <div className="right-0 absolute w-[45%] h-full bg-[url('./clock.png')] bg-cover bg-no-repeat"></div>
+                      <div className="right-0 absolute w-[45%] h-full bg-[url('/clock.png')] bg-cover bg-no-repeat"></div>
                       <section className="h-full  bg-[linear-gradient(200deg,#faff70,#538E38)] w-[30%] "> </section>
                    </div>
                
@@ -184,7 +184,7 @@ useEffect(() => {
                          </p>
                          <p className="mt-[2px] w-full text-[0.8rem] text-green-500 font-medium">+18% increase</p>
                       </section>
-                      <div className="right-0 absolute w-[45%] h-full bg-[url('./order.png')] bg-cover bg-no-repeat"></div>
+                      <div className="right-0 absolute w-[45%] h-full bg-[url('/order.png')] bg-cover bg-no-repeat"></div>
                       <section className="h-full  bg-[linear-gradient(200deg,#E67AB2,#75529C)] w-[30%] "> </section>
                    </div>
                   
@@ -229,7 +229,7 @@ useEffect(() => {
                           <Bar dataKey="fleet_required" fill="#5EA6EE" />
                         </BarChart>
                    </div>
-                   {/* bg-[url('./scooterOutline.png')] bg-contain bg-no-repeat */}
+                   {/* bg-[url('/scooterOutline.png')] bg-contain bg-no-repeat */}
                      <div name="utilisation" className="relative aspect-[3/2] w-[40%] shadow-sm bg-[#ffffff] rounded-lg ">
                  
                       <div className="absolute z-[10] backdrop-blur-[10px] border-[1.5px] border-[#dfdfdf] bg-[#ebebeb53] p-[10px] bottom-[10px] top-[10px] left-[10px] rounded-lg overflow-hidden">
