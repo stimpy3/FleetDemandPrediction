@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: fleet-backend
+    env: python
+    rootDir: backend
+    pythonVersion: 3.10.13
